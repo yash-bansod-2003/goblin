@@ -1,9 +1,11 @@
 import { Player } from "./player";
+import { InputHandler } from "./input-handler";
 
 export class Game {
   private readonly canvas: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly player: Player;
+  public readonly input: InputHandler;
 
   constructor(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");
@@ -16,6 +18,7 @@ export class Game {
     this.ctx = ctx;
 
     this.resize();
+    this.input = new InputHandler();
     this.player = new Player(this);
     window.addEventListener("resize", () => this.resize());
   }

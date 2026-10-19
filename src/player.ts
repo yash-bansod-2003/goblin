@@ -36,7 +36,12 @@ export class Player {
   }
 
   public update(): void {
-    // movement logic later
+    const input = this.game.input;
+
+    if (input.pressed("ArrowLeft")) this.moveLeft();
+    if (input.pressed("ArrowRight")) this.moveRight();
+    if (input.pressed("ArrowUp")) this.moveUp();
+    if (input.pressed("ArrowDown")) this.moveDown();
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
