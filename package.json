@@ -1,0 +1,17 @@
+{
+  "name": "goblin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "format": "npx prettier ./src --write",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
