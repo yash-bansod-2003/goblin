@@ -6,6 +6,7 @@ export class Game {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly player: Player;
   public readonly input: InputHandler;
+  private previousFrameTime = 0;
 
   constructor(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");
@@ -56,15 +57,18 @@ export class Game {
     requestAnimationFrame(this.gameLoop);
   }
 
-  private gameLoop = (): void => {
-    this.update();
-    this.render();
+  private gameLoop = (currentTime: number): void => {
+    const deltaTime = currentTime - this.previousFrameTime;
 
+    this.previousFrameTime = currentTime;
+
+    this.update(deltaTime);
+    this.render();
     requestAnimationFrame(this.gameLoop);
   };
 
-  private update(): void {
-    this.player.update();
+  private update(deltaTime: number): void {
+    this.player.update(deltaTime);
   }
 
   private render(): void {
