@@ -1,11 +1,16 @@
 import { Player } from "./player";
 import { InputHandler } from "./input-handler";
+import { ImageManager } from "./image-manager";
+
+import playerImg from "./assets/player.png";
 
 export class Game {
   private readonly canvas: HTMLCanvasElement;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly player: Player;
   public readonly input: InputHandler;
+  public readonly images: ImageManager;
+
   private previousFrameTime = 0;
 
   constructor(canvas: HTMLCanvasElement) {
@@ -20,6 +25,7 @@ export class Game {
 
     this.resize();
     this.input = new InputHandler();
+    this.images = new ImageManager();
     this.player = new Player(this);
     window.addEventListener("resize", () => this.resize());
   }
@@ -32,6 +38,10 @@ export class Game {
     const size = 30;
     this.canvas.width = window.innerWidth - (window.innerWidth % size);
     this.canvas.height = window.innerHeight - (window.innerHeight % size);
+  }
+
+  public async initialize(): Promise<void> {
+    await this.images.load("player", playerImg);
   }
 
   public debug(): void {

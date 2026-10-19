@@ -13,8 +13,8 @@ export class Player {
   constructor(game: Game) {
     this.game = game;
     const canvas = this.game.getCanvas();
-    this.x = canvas.width / 2;
-    this.y = canvas.height / 2;
+    this.x = (canvas.width - this.width) / 2;
+    this.y = (canvas.height - this.height) / 2;
   }
   public moveLeft(): void {
     this.x -= this.speed;
@@ -57,6 +57,12 @@ export class Player {
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
+    const image = this.game.images.get("player");
+
+    if (image) {
+      ctx.drawImage(image, this.x, this.y, this.width, this.height);
+      return;
+    }
     ctx.fillStyle = "red";
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
