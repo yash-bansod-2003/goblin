@@ -42,6 +42,10 @@ export class Player {
     if (input.pressed("ArrowRight")) this.moveRight();
     if (input.pressed("ArrowUp")) this.moveUp();
     if (input.pressed("ArrowDown")) this.moveDown();
+
+    const canvas = this.game.getCanvas();
+    this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
+    this.y = Math.max(0, Math.min(canvas.height - this.height, this.y));
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
