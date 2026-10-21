@@ -3,6 +3,12 @@ import { InputHandler } from "./input-handler";
 import { ImageManager } from "./image-manager";
 
 import playerImg from "./assets/player.png";
+import buttonClickAudio from "./assets/button_click.mp3";
+import buttonHoverAudio from "./assets/button_hover.mp3";
+import pauseAudio from "./assets/pause.mp3";
+import unPauseAudio from "./assets/unpause.mp3";
+
+import { AudioManager } from "./audio-manager";
 
 export class Game {
   private readonly canvas: HTMLCanvasElement;
@@ -10,6 +16,7 @@ export class Game {
   private readonly player: Player;
   public readonly input: InputHandler;
   public readonly images: ImageManager;
+  public readonly audio: AudioManager;
 
   private previousFrameTime = 0;
 
@@ -26,6 +33,7 @@ export class Game {
     this.resize();
     this.input = new InputHandler();
     this.images = new ImageManager();
+    this.audio = new AudioManager();
     this.player = new Player(this);
     window.addEventListener("resize", () => this.resize());
   }
@@ -35,19 +43,24 @@ export class Game {
   }
 
   private resize(): void {
-    const size = 30;
+    const size = 40;
     this.canvas.width = window.innerWidth - (window.innerWidth % size);
     this.canvas.height = window.innerHeight - (window.innerHeight % size);
   }
 
   public async initialize(): Promise<void> {
     await this.images.load("player", playerImg);
+
+    this.audio.load("buttonClick", buttonClickAudio);
+    this.audio.load("buttonHover", buttonHoverAudio);
+    this.audio.load("pause", pauseAudio);
+    this.audio.load("unpause", unPauseAudio);
   }
 
   public debug(): void {
     this.ctx.strokeStyle = "#444";
     this.ctx.lineWidth = 1;
-    const size = 30;
+    const size = 40;
 
     this.ctx.beginPath();
     for (let i = 0; i < this.canvas.width; i = i + size) {
