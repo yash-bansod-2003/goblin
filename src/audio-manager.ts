@@ -1,10 +1,30 @@
 export class AudioManager {
   private readonly sounds = new Map<string, HTMLAudioElement>();
 
-  public load(key: string, src: string): void {
-    const audio = new Audio(src);
+  public load(key: string, src: string): Promise<void> {
+    return new Promise((resolve) => {
+      const audio = new Audio(src);
 
-    this.sounds.set(key, audio);
+      const onReady = () => {
+        this.sounds.set(key, audio);
+        cleanup();
+        resolve();
+      };
+
+      const onError = () => {
+        cleanup();
+        resolve();
+      };
+
+      const cleanup = () => {
+        audio.removeEventListener("canplaythrough", onReady);
+        audio.removeEventListener("error", onError);
+      };
+
+      audio.addEventListener("canplaythrough", onReady, { once: true });
+      audio.addEventListener("error", onError, { once: true });
+      audio.load();
+    });
   }
 
   public play(key: string): void {
@@ -15,7 +35,7 @@ export class AudioManager {
     }
 
     sound.currentTime = 0;
-    sound.play();
+    sound.play().catch(console.error);
   }
 
   public pause(key: string): void {

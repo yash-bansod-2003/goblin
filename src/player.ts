@@ -65,13 +65,12 @@ export class Player {
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    const image = this.game.images.get("player");
-
-    if (image) {
+    try {
+      const image = this.game.images.get("player");
       ctx.drawImage(image, this.x, this.y, this.width, this.height);
-      return;
+    } catch {
+      ctx.fillStyle = "red";
+      ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }

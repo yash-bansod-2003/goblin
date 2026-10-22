@@ -51,10 +51,12 @@ export class Game {
   public async initialize(): Promise<void> {
     await this.images.load("player", playerImg);
 
-    this.audio.load("buttonClick", buttonClickAudio);
-    this.audio.load("buttonHover", buttonHoverAudio);
-    this.audio.load("pause", pauseAudio);
-    this.audio.load("unpause", unPauseAudio);
+    await Promise.all([
+      this.audio.load("buttonClick", buttonClickAudio),
+      this.audio.load("buttonHover", buttonHoverAudio),
+      this.audio.load("pause", pauseAudio),
+      this.audio.load("unpause", unPauseAudio),
+    ]);
   }
 
   public debug(): void {
