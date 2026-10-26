@@ -1,8 +1,11 @@
 import { Player } from "./player";
+import { Map } from "./map";
 import { InputHandler } from "./input-handler";
 import { ImageManager } from "./image-manager";
 
 import playerImg from "./assets/player.png";
+import mapImg from "./assets/1792962876837.png";
+
 import buttonClickAudio from "./assets/button_click.mp3";
 import buttonHoverAudio from "./assets/button_hover.mp3";
 import pauseAudio from "./assets/pause.mp3";
@@ -17,6 +20,7 @@ export class Game {
   public readonly input: InputHandler;
   public readonly images: ImageManager;
   public readonly audio: AudioManager;
+  public readonly map : Map;
 
   private previousFrameTime = 0;
 
@@ -35,6 +39,7 @@ export class Game {
     this.images = new ImageManager();
     this.audio = new AudioManager();
     this.player = new Player(this);
+    this.map = new Map(this);
     window.addEventListener("resize", () => this.resize());
   }
 
@@ -50,6 +55,7 @@ export class Game {
 
   public async initialize(): Promise<void> {
     await this.images.load("player", playerImg);
+    await this.images.load("map", mapImg);
 
     await Promise.all([
       this.audio.load("buttonClick", buttonClickAudio),
@@ -100,6 +106,7 @@ export class Game {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.debug();
+    this.map.draw(this.ctx);
     this.player.draw(this.ctx);
   }
 }
