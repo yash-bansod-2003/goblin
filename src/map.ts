@@ -1,33 +1,72 @@
 import type { Game } from "./game";
 
-export class Map {
-  private game: Game;
-  private readonly tileWidth = 100;
-  private readonly tileHeight = 72;
+export interface MapConfiguration {
+  tileSize: number;
+  mapWidth: number;
+  mapHeight: number;
+  layers: {
+    name: string,
+    tiles: {
+      id: string;
+      x: number;
+      y: number
+    }[],
+    collider: boolean,
+  }[]
+}
 
-  constructor(game: Game) {
+export class Map {
+  private readonly tilesetColumns = 8;
+  private readonly tilesetRows = 6;
+  private game: Game;
+  private readonly configuration: MapConfiguration;
+
+  constructor(game: Game, configuration: MapConfiguration) {
     this.game = game;
+    this.configuration = configuration;
   }
 
   public draw(ctx: CanvasRenderingContext2D): void {
-    const canvas = this.game.getCanvas();
+    const image = this.game.images.get("spritesheet");
+    const sourceTileSize = this.configuration.tileSize;
+    const destinationTileSize = sourceTileSize * 2;
+    const tileCount = this.tilesetColumns * this.tilesetRows;
 
-    try {
-      const image = this.game.images.get("map");
+    for (const layer of this.configuration.layers.reverse()) {
+      for (const tile of layer.tiles) {
+        const id = Number(tile.id);
 
-      ctx.drawImage(image, 10, 10, 2496, 1696, 0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 1;
-
-      for (let y = 0; y < canvas.height; y += this.tileHeight + 10) {
-        for (let x = 0; x < canvas.width; x += this.tileWidth + 12) {
-          ctx.strokeRect(x, y, this.tileWidth, this.tileHeight);
+        if (
+          !Number.isInteger(id) ||
+          id < 0 ||
+          id >= tileCount ||
+          !Number.isInteger(tile.x) ||
+          tile.x < 0 ||
+          tile.x >= this.configuration.mapWidth ||
+          !Number.isInteger(tile.y) ||
+          tile.y < 0 ||
+          tile.y >= this.configuration.mapHeight
+        ) {
+          throw new Error(`Invalid map tile '${tile.id}' at (${tile.x}, ${tile.y})`);
         }
+
+        const sourceX = (id % this.tilesetColumns) * sourceTileSize;
+        const sourceY = Math.floor(id / this.tilesetColumns) * sourceTileSize;
+        const destinationX = tile.x * destinationTileSize;
+        const destinationY = tile.y * destinationTileSize;
+
+        ctx.drawImage(
+          image,
+          sourceX,
+          sourceY,
+          sourceTileSize,
+          sourceTileSize,
+          destinationX,
+          destinationY,
+          destinationTileSize,
+          destinationTileSize,
+        );
       }
-    } catch {
-      ctx.fillStyle = "red";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   }
 }

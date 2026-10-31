@@ -1,15 +1,17 @@
 import { Player } from "./player";
-import { Map } from "./map";
+import { Map, type MapConfiguration } from "./map";
 import { InputHandler } from "./input-handler";
 import { ImageManager } from "./image-manager";
 
 import playerImg from "./assets/player.png";
-import mapImg from "./assets/1792962876837.png";
+import spritesheetImg from "./assets/spritesheet.png";
 
 import buttonClickAudio from "./assets/button_click.mp3";
 import buttonHoverAudio from "./assets/button_hover.mp3";
 import pauseAudio from "./assets/pause.mp3";
 import unPauseAudio from "./assets/unpause.mp3";
+
+import mapConfiguration from "./assets/map.json";
 
 import { AudioManager } from "./audio-manager";
 
@@ -20,7 +22,7 @@ export class Game {
   public readonly input: InputHandler;
   public readonly images: ImageManager;
   public readonly audio: AudioManager;
-  public readonly map : Map;
+  public readonly map: Map;
 
   private previousFrameTime = 0;
 
@@ -39,7 +41,7 @@ export class Game {
     this.images = new ImageManager();
     this.audio = new AudioManager();
     this.player = new Player(this);
-    this.map = new Map(this);
+    this.map = new Map(this, mapConfiguration as unknown as MapConfiguration);
     window.addEventListener("resize", () => this.resize());
   }
 
@@ -48,14 +50,14 @@ export class Game {
   }
 
   private resize(): void {
-    const size = 40;
+    const size = 32;
     this.canvas.width = window.innerWidth - (window.innerWidth % size);
     this.canvas.height = window.innerHeight - (window.innerHeight % size);
   }
 
   public async initialize(): Promise<void> {
     await this.images.load("player", playerImg);
-    await this.images.load("map", mapImg);
+    await this.images.load("spritesheet", spritesheetImg);
 
     await Promise.all([
       this.audio.load("buttonClick", buttonClickAudio),
@@ -68,7 +70,7 @@ export class Game {
   public debug(): void {
     this.ctx.strokeStyle = "#444";
     this.ctx.lineWidth = 1;
-    const size = 40;
+    const size = 32;
 
     this.ctx.beginPath();
     for (let i = 0; i < this.canvas.width; i = i + size) {
@@ -103,10 +105,11 @@ export class Game {
   }
 
   private render(): void {
+    this.ctx.imageSmoothingEnabled = false;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.debug();
     this.map.draw(this.ctx);
+    // this.debug();
     this.player.draw(this.ctx);
   }
 }
